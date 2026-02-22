@@ -15,7 +15,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main
 
 # Wait for Ingress
 echo "⏳ Waiting for Ingress Controller..."
-kubectl wait --namespace ingress-nginx   --for=condition=ready pod   --selector=app.kubernetes.io/component=controller   --timeout=90s
+kubectl wait --namespace ingress-nginx   --for=condition=available deployment/ingress-nginx-controller      --timeout=90s
 # Create Namespaces
 echo "WM Creating Environment Namespaces..."
 namespaces=("dev" "qa" "perf" "prod" "argocd" "monitoring")
@@ -23,4 +23,4 @@ for ns in "${namespaces[@]}"; do
     kubectl create ns $ns --dry-run=client -o yaml | kubectl apply -f -
 done
 
-echo "🎉 Cluster is Ready! Access it via localhost:80"
+echo "🎉 Cluster is Ready! Access it via localhost:8090"

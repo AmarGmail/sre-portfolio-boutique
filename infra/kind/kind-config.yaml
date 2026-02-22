@@ -10,8 +10,8 @@ nodes:
         node-labels: "ingress-ready=true"
   extraPortMappings:
   - containerPort: 80
-    hostPort: 80
+    hostPort: 8090    # CHANGED: 80 -> 8090
     protocol: TCP
   - containerPort: 443
-    hostPort: 443
+    hostPort: 8443    # CHANGED: 443 -> 8443
     protocol: TCP
