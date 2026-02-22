@@ -55,7 +55,7 @@ jobs:
           cd apps/boutique/overlays/dev
           
           # Use Kustomize to update the image reference
-          kustomize edit set image frontend=$NEW_IMAGE
+          kustomize edit set image gcr.io/google-samples/microservices-demo/frontend=$NEW_IMAGE
           
           # Commit the change back to the repository
           git config --global user.name 'GitHub Actions Bot'
