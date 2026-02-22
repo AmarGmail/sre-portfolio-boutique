@@ -10,3 +10,6 @@ images:
 - name: frontend
   newName: ghcr.io/AmarGmail/boutique-frontend
   newTag: sha-fa67d16
+- name: gcr.io/google-samples/microservices-demo/frontend
+  newName: ghcr.io/AmarGmail/boutique-frontend
+  newTag: sha-bc1a549
