@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: boutique-frontend-monitor
+  namespace: monitoring
+  labels:
+    release: kube-prom-stack # Required for Prometheus to pick it up
+spec:
+  selector:
+    matchLabels:
+      app: frontend # Targets the Google Frontend pod
+  namespaceSelector:
+    matchNames:
+    - dev
+  endpoints:
+  - port: http # The named port in the frontend Kubernetes Service
+    interval: 15s
+    path: /metrics
