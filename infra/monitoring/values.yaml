@@ -1,18 +1,18 @@
-# 1. Configure Grafana
 grafana:
-  adminPassword: "admin" # Simple password for local portfolio
+  adminPassword: "admin"
   defaultDashboardsTimezone: browser
-# 2. Tune Prometheus to use less RAM (Staff Level FinOps/Resource Management)
+
+# FIX FOR KIND CLUSTERS: Disable control plane scraping
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeEtcd:
+  enabled: false # <--- Added this to fix the connection refused error
+
 prometheus:
   prometheusSpec:
     scrapeInterval: 15s
-    retention: 2d # Only keep 2 days of data instead of 15
-    resources:
-      requests:
-        memory: 400Mi # Cap memory usage
-# 3. Disable heavy components we don't need for this demo
-alertmanager:
-  enabled: false
-prometheusOperator:
-  admissionWebhooks:
-    enabled: false
+    retention: 2d
