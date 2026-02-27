@@ -9,13 +9,3 @@ images:
 - name: gcr.io/google-samples/microservices-demo/frontend
   newName: ghcr.io/AmarGmail/boutique-frontend
   newTag: sha-bc1a549
-patches:
-- target:
-    kind: Deployment
-    name: loadgenerator
-  patch: |-
-    $patch: delete
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: loadgenerator
