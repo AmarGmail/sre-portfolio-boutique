@@ -28,3 +28,5 @@ replicas:
     count: 0
   - name: shippingservice
     count: 0
+  - name: loadgenerator
+    count: 0
