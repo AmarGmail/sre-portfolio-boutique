@@ -1,21 +1,30 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- ../../base
+  - ../../base
 namespace: qa
 commonLabels:
   env: qa
-images:
-- name: gcr.io/google-samples/microservices-demo/frontend
-  newName: ghcr.io/AmarGmail/boutique-frontend
-  newTag: sha-bc1a549
-patches:
-- target:
-    kind: Deployment
-    name: loadgenerator
-  patch: |-
-    $patch: delete
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: loadgenerator
+replicas:
+  - name: adservice
+    count: 0
+  - name: cartservice
+    count: 0
+  - name: checkoutservice
+    count: 0
+  - name: currencyservice
+    count: 0
+  - name: emailservice
+    count: 0
+  - name: frontend
+    count: 0
+  - name: paymentservice
+    count: 0
+  - name: productcatalogservice
+    count: 0
+  - name: recommendationservice
+    count: 0
+  - name: redis-cart
+    count: 0
+  - name: shippingservice
+    count: 0

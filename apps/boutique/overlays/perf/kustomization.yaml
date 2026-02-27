@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+namespace: perf
+commonLabels:
+  env: perf
+# We inject an environment variable to tell the load generator to attack the PERF frontend, not the default one.
+patches:
+  - target:
+      kind: Deployment
+      name: loadgenerator
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: "http://frontend.perf.svc.cluster.local:80"
