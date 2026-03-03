@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: boutique-prod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/AmarGmail/sre-portfolio-boutique.git'
+    targetRevision: HEAD
+    path: apps/boutique/overlays/prod
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
