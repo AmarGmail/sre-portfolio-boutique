@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../base
+- hpa.yaml
+- pdb.yaml
+namespace: prod
+commonLabels:
+  env: prod
+# Ensure the loadgenerator is deleted from PROD!
+patches:
+- patch: |-
+    $patch: delete
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: loadgenerator
+  target:
+    kind: Deployment
+    name: loadgenerator
+images:
+- name: gcr.io/google-samples/microservices-demo/frontend
+  newName: ghcr.io/AmarGmail/boutique-frontend
+  newTag: sha-bc1a549
+  - ingress.yaml
