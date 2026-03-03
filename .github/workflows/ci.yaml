@@ -6,10 +6,12 @@ on:
       - main
     paths:
       - 'apps/boutique/src/frontend/**'
-      - '.github/workflows/**' # FIX: Now editing the pipeline triggers the pipeline!
+      - '.github/workflows/**'
 
 env:
   REGISTRY: ghcr.io
+  # We will just use this for the Registry Login. 
+  # For image tagging, we rely on the metadata action to normalize casing.
   IMAGE_NAME: ${{ github.repository_owner }}/boutique-frontend
 
 jobs:
@@ -45,13 +47,13 @@ jobs:
           load: true
           tags: ${{ steps.meta.outputs.tags }}
 
-      # FIX: Using native GitHub metadata for the image-ref
+      # FIX: Use the 'tags' output which is guaranteed to be lowercase
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+          image-ref: ${{ steps.meta.outputs.tags }}
           format: 'table'
-          exit-code: '0' # AUDIT MODE: Will not break the build
+          exit-code: '0' # Audit Mode
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL'
@@ -62,15 +64,17 @@ jobs:
           context: ./apps/boutique/src/frontend
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Update Kustomize Image Tag
         run: |
-          NEW_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}"
+          # FIX: Use the normalized tag here too to ensure Kustomize gets the lowercase name
+          NEW_IMAGE="${{ steps.meta.outputs.tags }}"
+          echo "Updating to: $NEW_IMAGE"
+          
           cd apps/boutique/overlays/dev
           kustomize edit set image gcr.io/google-samples/microservices-demo/frontend=$NEW_IMAGE
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
           git add kustomization.yaml
-          git commit -m "chore: update frontend image to ${{ steps.meta.outputs.version }} [skip ci]"
+          git commit -m "chore: update frontend image to ${{ steps.meta.outputs.tags }} [skip ci]"
           git push
