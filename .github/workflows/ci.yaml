@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - 'apps/boutique/src/frontend/**'
-      - 'apps/boutique/src/frontend/**'
+      - '.github/workflows/**' # FIX: Now editing the pipeline triggers the pipeline!
 
 env:
   REGISTRY: ghcr.io
@@ -18,7 +18,7 @@ jobs:
     permissions:
       contents: write
       packages: write
-      security-events: write # Required for security scanning
+      security-events: write
 
     steps:
       - name: Checkout repository
@@ -38,26 +38,24 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: type=sha,format=short
 
-      # 1. BUILD THE IMAGE (But don't push it yet!)
       - name: Build Docker image locally
         uses: docker/build-push-action@v5
         with:
           context: ./apps/boutique/src/frontend
-          load: true # This keeps the image on the runner for scanning
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
 
-      # 2. THE SHIFT-LEFT SECURITY SCAN (Trivy)
+      # FIX: Using native GitHub metadata for the image-ref
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${GITHUB_SHA::7}
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
           format: 'table'
-          exit-code: '0' # This tells GitHub to FAIL THE PIPELINE if vulnerabilities are found
+          exit-code: '0' # AUDIT MODE: Will not break the build
           ignore-unfixed: true
           vuln-type: 'os,library'
-          severity: 'CRITICAL' # Only break the build for Critical CVEs
+          severity: 'CRITICAL'
 
-      # 3. PUSH THE IMAGE (Only happens if the scan passes!)
       - name: Push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -66,14 +64,13 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      # 4. UPDATE GITOPS MANIFEST
       - name: Update Kustomize Image Tag
         run: |
-          NEW_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${GITHUB_SHA::7}"
+          NEW_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}"
           cd apps/boutique/overlays/dev
           kustomize edit set image gcr.io/google-samples/microservices-demo/frontend=$NEW_IMAGE
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
           git add kustomization.yaml
-          git commit -m "chore: update frontend image to sha-${GITHUB_SHA::7} [skip ci]"
+          git commit -m "chore: update frontend image to ${{ steps.meta.outputs.version }} [skip ci]"
           git push
