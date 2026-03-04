@@ -50,7 +50,11 @@ flowchart TD
         Ingress -->|Route| ProdEnv
         Kyverno -->|Enforce Policies| Pods
     end
+
 ---
+```
+
+
 ## 🛠️ The Tech Stack
 Domain	Tool	Why I Chose It (Architectural Decision)
 Orchestration	Kind (Kubernetes in Docker)	Simulates a full K8s API locally, enabling zero-cost infrastructure iteration while maintaining API compatibility with GKE/EKS.
@@ -62,5 +66,3 @@ Observability	Prometheus & Grafana	Industry standard. Configured with ServiceMon
 IaC	Terraform	Manages the Governance of the repository itself (Branch Protection, Repo Settings) to treat "Governance as Code."
 ---
 Built by Amarjyoti Lahkar
-
-```
