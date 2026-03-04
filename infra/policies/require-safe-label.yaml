@@ -1,0 +1,20 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-safe-label
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+  - name: check-label
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    validate:
+      message: "You didn't say the magic word! Label 'safe=true' is required."
+      pattern:
+        metadata:
+          labels:
+            safe: "true"
