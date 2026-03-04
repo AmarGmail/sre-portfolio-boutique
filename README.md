@@ -51,18 +51,17 @@ flowchart TD
         Kyverno -->|Enforce Policies| Pods
     end
 
----
 ```
-
+---
 
 ## 🛠️ The Tech Stack
-Domain	Tool	Why I Chose It (Architectural Decision)
-Orchestration	Kind (Kubernetes in Docker)	Simulates a full K8s API locally, enabling zero-cost infrastructure iteration while maintaining API compatibility with GKE/EKS.
-GitOps	ArgoCD	Implements the "Pull Model" for deployment. Ensures the cluster state always matches Git, preventing configuration drift.
-CI / Build	GitHub Actions	Tightly integrated with the source code. Allows for event-driven triggers (Push/PR) to build Docker images automatically.
-Security (Left)	Trivy	Scans container images for CVEs before push. Configured to break the build on CRITICAL vulnerabilities.
-Security (Right)	Kyverno	Policy-as-Code engine. Enforces runtime security (e.g., "Disallow Root User") natively within the cluster.
-Observability	Prometheus & Grafana	Industry standard. Configured with ServiceMonitors to scrape NGINX and cAdvisor metrics for Golden Signals (Latency, Traffic, Errors).
-IaC	Terraform	Manages the Governance of the repository itself (Branch Protection, Repo Settings) to treat "Governance as Code."
+Domain	        Tool	                        Why I Chose It (Architectural Decision)
+Orchestration	Kind (Kubernetes in Docker)	    Simulates a full K8s API locally, enabling zero-cost infrastructure                                                      iteration while maintaining API compatibility with GKE/EKS.
+GitOps	ArgoCD	                                Implements the "Pull Model" for deployment. Ensures the cluster state                                                    always matches Git, preventing configuration drift.
+CI / Build	GitHub Actions	                    Tightly integrated with the source code. Allows for event-driven                                                         triggers (Push/PR) to build Docker images automatically.
+Security (Left)	Trivy	                        Scans container images for CVEs before push. Configured to break the                                                     build on CRITICAL vulnerabilities.
+Security (Right)	Kyverno	                    Policy-as-Code engine. Enforces runtime security (e.g., "Disallow Root                                                   User") natively within the cluster.
+Observability	Prometheus & Grafana	        Industry standard. Configured with ServiceMonitors to scrape NGINX and                                                   cAdvisor metrics for Golden Signals (Latency, Traffic, Errors).
+IaC	Terraform	                                Manages the Governance of the repository itself (Branch Protection, Repo Settings) to treat "Governance as Code."
 ---
 Built by Amarjyoti Lahkar
