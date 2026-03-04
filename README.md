@@ -50,42 +50,5 @@ flowchart TD
         Ingress -->|Route| ProdEnv
         Kyverno -->|Enforce Policies| Pods
     end
-🛠️ The Tech Stack
-Domain	Tool	Why I Chose It (Architectural Decision)
-Orchestration	Kind (Kubernetes in Docker)	Simulates a full K8s API locally, enabling zero-cost infrastructure iteration while maintaining API compatibility with GKE/EKS.
-GitOps	ArgoCD	Implements the "Pull Model" for deployment. Ensures the cluster state always matches Git, preventing configuration drift.
-CI / Build	GitHub Actions	Tightly integrated with the source code. Allows for event-driven triggers (Push/PR) to build Docker images automatically.
-Security (Left)	Trivy	Scans container images for CVEs before push. Configured to break the build on CRITICAL vulnerabilities.
-Security (Right)	Kyverno	Policy-as-Code engine. Enforces runtime security (e.g., "Disallow Root User") natively within the cluster.
-Observability	Prometheus & Grafana	Industry standard. Configured with ServiceMonitors to scrape NGINX and cAdvisor metrics for Golden Signals (Latency, Traffic, Errors).
-IaC	Terraform	Manages the Governance of the repository itself (Branch Protection, Repo Settings) to treat "Governance as Code."
-🛡️ Security & Governance Highlights
-1. Supply Chain Security (Shift-Left)
-The pipeline includes a strict gate using Trivy.
-Action: Scans every build artifact.
-Policy: If severity == CRITICAL, the pipeline aborts.
-Result: Vulnerable code never reaches the registry.
-2. Runtime Protection (Shift-Right)
-Kyverno policies are applied to the cluster to prevent insecure configurations.
-Policy: disallow-root-user
-Effect: Any Pod attempting to run as UID 0 is actively blocked by the Admission Controller.
-3. Governance as Code
-The repository settings are not clicked manually; they are managed via Terraform.
-Rule: main branch is protected.
-Rule: Force pushes are disabled.
-📊 Observability Strategy
-Because the application source code (Google Online Boutique) transitioned to OTel-only metrics, I implemented a Whitebox vs. Blackbox trade-off:
-Infrastructure (cAdvisor): Tracks raw Network I/O and CPU throttling at the container level.
-Edge (NGINX): Tracks HTTP 500 errors and Latency at the Ingress controller.
-Visuals: Custom Grafana dashboards built with PromQL to aggregate rate() of request volume per namespace.
-🚀 How to Replicate
-Prerequisites
-Docker Desktop / WSL2
-kubectl, helm, terraform
-GitHub Token
-Bootstrap Command
-The entire platform initializes via a single entry point script:
-```bash
-./scripts/bootstrap.sh
 ```
-Built by [Your Name] - Staff SRE / DevOps Engineer
+Built by Amarjyoti Lahkar
