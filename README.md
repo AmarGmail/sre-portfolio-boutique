@@ -51,8 +51,7 @@ flowchart TD
         Kyverno -->|Enforce Policies| Pods
     end
 
+```
 ---
 
 Built by Amarjyoti Lahkar
-=======
-```
