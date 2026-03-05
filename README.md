@@ -115,4 +115,4 @@ The entire platform initializes via a single entry point script:
 
 ---
 
-Built by [Amarjyoti Lahkar](https://github.com/AmarGmail) — Staff SRE / DevOps Engineer
+Built by [Amarjyoti Lahkar](https://github.com/AmarGmail) 
