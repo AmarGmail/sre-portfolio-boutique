@@ -7,8 +7,11 @@ metadata:
     policies.kyverno.io/category: Pod Security Standards (Restricted)
     policies.kyverno.io/severity: medium
     policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Running as root gives a container dangerous access to the host.
+      This policy forces containers to run as a non-root user.
 spec:
-  validationFailureAction: Enforce
+  validationFailureAction: Enforce  # Options: Enforce (Block) or Audit (Log only)
   background: true
   rules:
     - name: check-run-as-non-root
@@ -17,15 +20,6 @@ spec:
         - resources:
             kinds:
               - Pod
-      # THE FIX: Exclude Infrastructure Namespaces
-      exclude:
-        any:
-        - resources:
-            namespaces:
-              - argocd
-              - kube-system
-              - kyverno
-              - monitoring
       validate:
         message: "Running as root is forbidden. You must set runAsNonRoot: true."
         pattern:
